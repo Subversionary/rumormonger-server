@@ -10,7 +10,8 @@ class Rumormonger:
     __tokenlimit = None
     __Chat = None
 
-    def __init__(self):
+    @staticmethod
+    def init():
         Rumormonger.__key = config['OpenAI']['api_key']
         Rumormonger.__base_url = config['OpenAI']['api_endpoint']
         Rumormonger.__model = config['OpenAI']['model']
@@ -19,6 +20,6 @@ class Rumormonger:
                                                 base_url=Rumormonger.__base_url)
 
     @staticmethod
-    async def Completion(message, temperature):
+    async def completion(message, temperature):
         reply = await Rumormonger.__Chat.chat.completions.create(model=Rumormonger.__model, messages=message, temperature=temperature)
         return [reply.choices[0].message, reply.usage.completion_tokens]
