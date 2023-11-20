@@ -18,8 +18,6 @@ async def parse_parameters(messages, temperature):
 
 
 async def rumor():
-    rumormonger = Rumormonger()
-
     key = request.args.get('key', default=None, type=str)
     data = Rumors.get_data_by_key(key)
     if not data:
@@ -31,7 +29,7 @@ async def rumor():
     temperature = request.args.get('temperature', default=None, type=float)
     messages_obj, temperature = await parse_parameters(messages, temperature)
 
-    resp = await rumormonger.Completion(messages_obj, temperature)
+    resp = await Rumormonger.completion(messages_obj, temperature)
 
     message = resp[0]
     usage = resp[1]

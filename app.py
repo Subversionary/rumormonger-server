@@ -1,5 +1,6 @@
 from flask import Flask
 
+from ChatGPT.rumormonger import Rumormonger
 from Database.Rumors import Rumors
 from v1 import create_api_blueprint
 import config
@@ -14,6 +15,7 @@ app.register_blueprint(api_blueprint, url_prefix='/v1')
 def run_app():
     config.load()
     Rumors.initialize_db()
+    Rumormonger.init()
     app.run(debug=True)
 
 
