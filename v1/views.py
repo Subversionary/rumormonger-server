@@ -7,8 +7,9 @@ from Database.Account import Account
 from Database.Rumors import Rumors
 from config import config
 
+
 async def validate_key(key):
-    if key == None or Rumors.is_key_banned(key):
+    if key is None or Rumors.is_key_banned(key):
         abort(403)
 
 
@@ -25,9 +26,16 @@ async def rumor():
     acc = Account(data['key'], data['tokens'], data['lastip'], data['banned'])
     await validate_key(acc.key)
 
+    if request.remote_addr != acc.ip:
+        acc.ip = request.remote_addr
+
     messages = request.args.get('messages', default=None, type=str)
     temperature = request.args.get('temperature', default=None, type=float)
+
     messages_obj, temperature = await parse_parameters(messages, temperature)
+
+    if messages_obj is None or temperature is None:
+        abort(400)
 
     resp = await Rumormonger.completion(messages_obj, temperature)
 
@@ -38,12 +46,13 @@ async def rumor():
 
     return jsonify(role=message.role, message=message.content)
 
+
 async def CreateAccount():
     keyword = request.args.get('secret', default=None, type=str)
-    if keyword == config['RUMOR']['secret']:
+    if keyword == config['RUMOR']['secret'] or config['API']['openregistration'] is True:
         secret = secrets.token_hex(12).upper()
         Rumors.insert_data(secret, 0, request.remote_addr, False)
         account = Rumors.get_data_by_key(secret)
-        return jsonify(token=account.key, tokens=account.tokens, ip = account.ip, banned=account.banned)
+        return jsonify(token=account.key, tokens=account.tokens, ip="None", banned=account.banned)
     abort(403)
-        
+
