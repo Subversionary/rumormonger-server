@@ -20,6 +20,9 @@ class Rumormonger:
                                                 base_url=Rumormonger.__base_url)
 
     @staticmethod
-    async def completion(message, temperature):
-        reply = await Rumormonger.__Chat.chat.completions.create(model=Rumormonger.__model, messages=message, temperature=temperature)
+    async def completion(message, temperature=None):
+        args = {'model': Rumormonger.__model, 'messages': message}
+        if temperature:
+            args['temperature'] = temperature
+        reply = await Rumormonger.__Chat.chat.completions.create(**args)
         return [reply.choices[0].message, reply.usage.completion_tokens]

@@ -1,11 +1,11 @@
 from Database.Rumors import Rumors
 
 class Account:
-    def __init__(self, key, tokens, ip, banned):
-        self._key = key
-        self._tokens = tokens
-        self._ip = ip
-        self._banned = banned
+    def __init__(self, account_data=None):
+        self._key = account_data['key']
+        self._tokens = account_data['tokens']
+        self._ip = account_data['lastip']
+        self._banned = account_data['banned']
 
     @property
     def key(self):
